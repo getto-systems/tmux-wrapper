@@ -75,8 +75,8 @@ tmux_wrapper_path(){
 と書くと
 
 ```
-bind c neww -n name "ssh $HOST -t 'cd /path/to/dir; bash'"
-bind C-1 neww -n name1 "ssh $HOST -t 'cd /path/to/dir1; bash'"
-bind C-2 neww -n name2 "ssh $HOST -t 'cd /path/to/dir2; bash'"
-bind C-3 neww -n name3 "ssh $HOST -t 'cd /path/to/dir3; bash'"
+bind c neww -n name "ssh $tmux_wrapper_host -t 'cd /path/to/dir; bash'"
+bind C-1 neww -n name1 "ssh $tmux_wrapper_host -t 'cd /path/to/dir1; bash'"
+bind C-2 neww -n name2 "ssh $tmux_wrapper_host -t 'cd /path/to/dir2; bash'"
+bind C-3 neww -n name3 "ssh $tmux_wrapper_host -t 'cd /path/to/dir3; bash'"
 ```
