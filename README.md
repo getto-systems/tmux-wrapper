@@ -8,7 +8,7 @@ usage
 -----
 
 ```bash
-usage
+#!/bin/bash
 
 . base.sh
 
@@ -76,7 +76,7 @@ tmux_wrapper_path(){
 
 ```
 bind c neww -n name "ssh $HOST -t 'cd /path/to/dir; bash'"
-bind C-1 neww -n name1 "ssh 192.168.1.60 -t 'cd /path/to/dir1; bash'"
-bind C-2 neww -n name2 "ssh 192.168.1.60 -t 'cd /path/to/dir2; bash'"
-bind C-3 neww -n name3 "ssh 192.168.1.60 -t 'cd /path/to/dir3; bash'"
+bind C-1 neww -n name1 "ssh $HOST -t 'cd /path/to/dir1; bash'"
+bind C-2 neww -n name2 "ssh $HOST -t 'cd /path/to/dir2; bash'"
+bind C-3 neww -n name3 "ssh $HOST -t 'cd /path/to/dir3; bash'"
 ```
