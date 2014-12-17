@@ -65,6 +65,7 @@ tmux_wrapper_main(){
 }
 tmux_wrapper_exec(){
 	if tmux -S "$tmux_wrapper_socket" has -t "$tmux_wrapper_session" 2> /dev/null; then
+		tmux -S "$tmux_wrapper_socket" source "$tmux_wrapper_work"
 		tmux -S "$tmux_wrapper_socket" a -t "$tmux_wrapper_session"
 		return
 	fi
