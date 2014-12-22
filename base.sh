@@ -5,9 +5,9 @@
 # tmux_wrapper_host=192.168.1.1
 # tmux_wrapper_color=cyan
 #
-# tmux_wrapper_path(){
+# tmux_wrapper_build_bind(){
 #	  # bind key, window name, path
-#	  echo c name /path/to/dir
+#	  tmux_wrapper_bind c name /path/to/dir
 # }
 #
 # tmux_wrapper_main
@@ -17,13 +17,17 @@
 #
 # tmux_wrapper_host    : ssh remote host           ; localhost
 # tmux_wrapper_color   : status line color         ; green
-# tmux_wrapper_path()  : when call, echo list of remote host's dir and bind key
+#
+# tmux_wrapper_build_bind() : build bind key config
+#
+# tmux_wrapper_file                : specify base .tmux.conf   ; ~/.tmux.conf
+# tmux_wrapper_term                : screen or screen-256color ; screen-256color
+# tmux_wrapper_initial_window_name : initial window name
+# tmux_wrapper_initial_window_path : initial window path
 #
 # tmux_wrapper_id        : using socket, or config path    ; tmux${0//\/-}
 # tmux_wrapper_session   : name of tmux session            ; <$(basename $0)>
 # tmux_wrapper_work_path : working directory use in script ; ~/.tmux.wrapper
-# tmux_wrapper_file      : specify base .tmux.conf   ; ~/.tmux.conf
-# tmux_wrapper_term    : screen or screen-256color ; screen-256color
 
 tmux_wrapper_main(){
 	if [ -z "$tmux_wrapper_file" ]; then
@@ -60,9 +64,21 @@ tmux_wrapper_main(){
 	echo 'set -g status-left "#[fg='$tmux_wrapper_color']'$tmux_wrapper_session'"' >> "$tmux_wrapper_work"
 	echo 'set -g status-right "#[fg='$tmux_wrapper_color'][#(ssh '$tmux_wrapper_host' uptime | sed '"'s/.*load average: //'"')]"' >> "$tmux_wrapper_work"
 
-	tmux_wrapper_path | awk '{print "bind " $1 " neww -n " $2 " \"ssh '$tmux_wrapper_host' -t '"'"'cd " $3 "; bash'"'"'\""}' >> "$tmux_wrapper_work"
+	tmux_wrapper_build_bind
 
 	tmux_wrapper_exec
+}
+tmux_wrapper_build_bind(){
+	:
+}
+tmux_wrapper_bind(){
+	if [ -z "$tmux_wrapper_initial_window_name" ]; then
+		tmux_wrapper_initial_window_name=$2
+	fi
+	if [ -z "$tmux_wrapper_initial_window_path" ]; then
+		tmux_wrapper_initial_window_path=$3
+	fi
+	echo bind $1 neww -n $2 '"ssh '$tmux_wrapper_host' -t '"'cd $3; bash'"'"' >> "$tmux_wrapper_work"
 }
 tmux_wrapper_exec(){
 	if tmux -S "$tmux_wrapper_socket" has -t "$tmux_wrapper_session" 2> /dev/null; then
@@ -71,22 +87,17 @@ tmux_wrapper_exec(){
 		return
 	fi
 
-	tmux_wrapper_window_name=$(tmux_wrapper_path | head -1 | awk '{print $2}')
-	tmux_wrapper_window_dir=$(tmux_wrapper_path | head -1 | awk '{print $3}')
-	if [ -z "$tmux_wrapper_window_name" ]; then
+	if [ -z "$tmux_wrapper_initial_window_name" ]; then
 		tmux_wrapper_exec_bare
 		return
 	fi
-	if [ -z "$tmux_wrapper_window_dir" ]; then
+	if [ -z "$tmux_wrapper_initial_window_path" ]; then
 		tmux_wrapper_exec_bare
 		return
 	fi
 
-	tmux -S "$tmux_wrapper_socket" -f "$tmux_wrapper_work" new -s "$tmux_wrapper_session" -n "$tmux_wrapper_window_name" "ssh $tmux_wrapper_host -t 'cd $tmux_wrapper_window_dir; bash'"
+	tmux -S "$tmux_wrapper_socket" -f "$tmux_wrapper_work" new -s "$tmux_wrapper_session" -n "$tmux_wrapper_initial_window_name" "ssh $tmux_wrapper_host -t 'cd $tmux_wrapper_initial_window_path; bash'"
 }
 tmux_wrapper_exec_bare(){
 	tmux -S "$tmux_wrapper_socket" -f "$tmux_wrapper_work" new -s "$tmux_wrapper_session" -n "$tmux_wrapper_session" "ssh $tmux_wrapper_host"
-}
-tmux_wrapper_path(){
-	:
 }
