@@ -12,14 +12,14 @@ usage
 ```bash
 #!/bin/bash
 
-. base.sh
+. tmux_wrapper.sh
 
 tmux_wrapper_host=192.168.1.1
 tmux_wrapper_color=red
 
 tmux_wrapper_build_bind(){
-  # bind key, window name, initial path
-  tmux_wrapper_bind c name /path/to/dir
+	# bind key, window name, initial path
+	tmux_wrapper_bind c name /path/to/dir
 }
 
 tmux_wrapper_main
@@ -51,7 +51,7 @@ tmux_wrapper_main
 tmux_wrapper_color=green
 tmux_wrapper_host=localhost
 tmux_wrapper_build_bind(){
-  :
+	:
 }
 
 tmux_wrapper_term=screen-256color
@@ -59,7 +59,8 @@ tmux_wrapper_file=~/.tmux.conf
 tmux_wrapper_initial_window_name=""
 tmux_wrapper_initial_window_path=""
 
-tmux_wrapper_id="tmux${0//\/-}"
+tmux_wrapper_id_prefix="hosts"
+tmux_wrapper_id="tmux${${0#*$tmux_wrapper_id_prefix/}//\/-}"
 tmux_wrapper_session="<$(basename $0)>"
 tmux_wrapper_work_path=~/.tmux.wrapper
 ```
@@ -79,18 +80,19 @@ tmux_wrapper_work_path=~/.tmux.wrapper
 
 ### ほぼ指定しないで良いもの
 
-* `tmux_wrapper_id`      : ソケットパス、生成する設定ファイルパスに使用される id
-* `tmux_wrapper_session` : セッション名
-* `tmux_wrapper_work`    : スクリプトで生成する作業ファイル、ソケットファイルを保存するパス
+* `tmux_wrapper_id_prefix` : `tmux_wrapper_id` の生成時に使用される prefix
+* `tmux_wrapper_id`        : ソケットパス、生成する設定ファイルパスに使用される id
+* `tmux_wrapper_session`   : セッション名
+* `tmux_wrapper_work`      : スクリプトで生成する作業ファイル、ソケットファイルを保存するパス
 
 ### tmux_wrapper_build_bind のサンプル
 
 ```
 tmux_wrapper_build_bind(){
-  tmux_wrapper_bind c name /path/to/dir
-  tmux_wrapper_bind C-1 name1 /path/to/dir1
-  tmux_wrapper_bind C-2 name2 /path/to/dir2
-  tmux_wrapper_bind C-3 name3 /path/to/dir3
+	tmux_wrapper_bind c name /path/to/dir
+	tmux_wrapper_bind M-1 name1 /path/to/dir1
+	tmux_wrapper_bind M-2 name2 /path/to/dir2
+	tmux_wrapper_bind M-3 name3 /path/to/dir3
 }
 ```
 
@@ -98,9 +100,9 @@ tmux_wrapper_build_bind(){
 
 ```
 bind c neww -n name "ssh $tmux_wrapper_host -t 'cd /path/to/dir; bash'"
-bind C-1 neww -n name1 "ssh $tmux_wrapper_host -t 'cd /path/to/dir1; bash'"
-bind C-2 neww -n name2 "ssh $tmux_wrapper_host -t 'cd /path/to/dir2; bash'"
-bind C-3 neww -n name3 "ssh $tmux_wrapper_host -t 'cd /path/to/dir3; bash'"
+bind M-1 neww -n name1 "ssh $tmux_wrapper_host -t 'cd /path/to/dir1; bash'"
+bind M-2 neww -n name2 "ssh $tmux_wrapper_host -t 'cd /path/to/dir2; bash'"
+bind M-3 neww -n name3 "ssh $tmux_wrapper_host -t 'cd /path/to/dir3; bash'"
 ```
 
 個々の bind で異なるホストを指定できるようにするつもりはない

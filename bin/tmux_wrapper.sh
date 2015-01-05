@@ -1,34 +1,3 @@
-# usage
-#
-# . base.sh
-#
-# tmux_wrapper_host=192.168.1.1
-# tmux_wrapper_color=cyan
-#
-# tmux_wrapper_build_bind(){
-#	  # bind key, window name, path
-#	  tmux_wrapper_bind c name /path/to/dir
-# }
-#
-# tmux_wrapper_main
-
-
-# suppported options and defaults
-#
-# tmux_wrapper_host    : ssh remote host           ; localhost
-# tmux_wrapper_color   : status line color         ; green
-#
-# tmux_wrapper_build_bind() : build bind key config
-#
-# tmux_wrapper_file                : specify base .tmux.conf   ; ~/.tmux.conf
-# tmux_wrapper_term                : screen or screen-256color ; screen-256color
-# tmux_wrapper_initial_window_name : initial window name
-# tmux_wrapper_initial_window_path : initial window path
-#
-# tmux_wrapper_id        : using socket, or config path    ; tmux${0//\/-}
-# tmux_wrapper_session   : name of tmux session            ; <$(basename $0)>
-# tmux_wrapper_work_path : working directory use in script ; ~/.tmux.wrapper
-
 tmux_wrapper_main(){
 	if [ -z "$tmux_wrapper_file" ]; then
 		tmux_wrapper_file=~/.tmux.conf
@@ -46,8 +15,12 @@ tmux_wrapper_main(){
 		tmux_wrapper_color=green
 	fi
 
+	if [ -z "$tmux_wrapper_id_prefix" ]; then
+		tmux_wrapper_id_prefix=hosts
+	fi
 	if [ -z "$tmux_wrapper_id" ]; then
-		tmux_wrapper_id="tmux${0//\//-}"
+		tmux_wrapper_id=${0#*$tmux_wrapper_id_prefix/}
+		tmux_wrapper_id="tmux-${tmux_wrapper_id//\//-}"
 	fi
 	if [ -z "$tmux_wrapper_session" ]; then
 		tmux_wrapper_session="<$(basename $0)>"
