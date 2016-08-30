@@ -6,7 +6,7 @@ tmux_wrapper_main(){
     tmux_wrapper_work_path=~/.tmux.wrapper
   fi
   if [ -z "$tmux_wrapper_term" ]; then
-    tmux_wrapper_term=screen-256color
+    tmux_wrapper_term=xterm-256color
   fi
   if [ -z "$tmux_wrapper_host" ]; then
     tmux_wrapper_host=localhost
