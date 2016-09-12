@@ -31,7 +31,7 @@ tmux_wrapper_main(){
   fi
 
   tmux_wrapper_work=$tmux_wrapper_work_path/$tmux_wrapper_id.conf
-  tmux_wrapper_socket=$tmux_wrapper_work_path/tmux.sock
+  tmux_wrapper_socket=$tmux_wrapper_work_path/$tmux_wrapper_id.sock
 
   cp "$tmux_wrapper_file" "$tmux_wrapper_work"
   echo >> "$tmux_wrapper_work"
