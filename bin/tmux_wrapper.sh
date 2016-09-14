@@ -73,8 +73,8 @@ tmux_wrapper_exec(){
     return
   fi
 
-  tmux -S "$tmux_wrapper_socket" -f "$tmux_wrapper_work" new -s "$tmux_wrapper_session" -n "$tmux_wrapper_initial_window_name" "ssh $tmux_wrapper_host -t 'cd $tmux_wrapper_initial_window_path; bash'"
+  tmux -u -S "$tmux_wrapper_socket" -f "$tmux_wrapper_work" new -s "$tmux_wrapper_session" -n "$tmux_wrapper_initial_window_name" "ssh $tmux_wrapper_host -t 'cd $tmux_wrapper_initial_window_path; bash'"
 }
 tmux_wrapper_exec_bare(){
-  tmux -S "$tmux_wrapper_socket" -f "$tmux_wrapper_work" new -s "$tmux_wrapper_session" -n "$tmux_wrapper_session" "ssh $tmux_wrapper_host"
+  tmux -u -S "$tmux_wrapper_socket" -f "$tmux_wrapper_work" new -s "$tmux_wrapper_session" -n "$tmux_wrapper_session" "ssh $tmux_wrapper_host"
 }
