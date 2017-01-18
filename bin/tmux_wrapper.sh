@@ -11,7 +11,7 @@ tmux_wrapper_main(){
   if [ -z "$tmux_wrapper_host" ]; then
     tmux_wrapper_host=localhost
   fi
-  if [ -z "$tmux_wrapper_host" ]; then
+  if [ -z "$tmux_wrapper_shell" ]; then
     tmux_wrapper_shell=bash
   fi
   if [ -z "$tmux_wrapper_color" ]; then
