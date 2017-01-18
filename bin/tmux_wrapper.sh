@@ -11,6 +11,9 @@ tmux_wrapper_main(){
   if [ -z "$tmux_wrapper_host" ]; then
     tmux_wrapper_host=localhost
   fi
+  if [ -z "$tmux_wrapper_host" ]; then
+    tmux_wrapper_shell=bash
+  fi
   if [ -z "$tmux_wrapper_color" ]; then
     tmux_wrapper_color=green
   fi
@@ -55,7 +58,7 @@ tmux_wrapper_bind(){
   if [ -z "$tmux_wrapper_initial_window_path" ]; then
     tmux_wrapper_initial_window_path=$3
   fi
-  echo bind $1 neww -n $2 '"ssh '$tmux_wrapper_host' -t '"'cd $3; bash'"'"' >> "$tmux_wrapper_work"
+  echo bind $1 neww -n $2 '"ssh '$tmux_wrapper_host' -t '"'cd $3; $tmux_wrapper_shell'"'"' >> "$tmux_wrapper_work"
 }
 tmux_wrapper_exec(){
   if tmux -S "$tmux_wrapper_socket" has -t "$tmux_wrapper_session" 2> /dev/null; then
@@ -73,7 +76,7 @@ tmux_wrapper_exec(){
     return
   fi
 
-  tmux -u -S "$tmux_wrapper_socket" -f "$tmux_wrapper_work" new -s "$tmux_wrapper_session" -n "$tmux_wrapper_initial_window_name" "ssh $tmux_wrapper_host -t 'cd $tmux_wrapper_initial_window_path; bash'"
+  tmux -u -S "$tmux_wrapper_socket" -f "$tmux_wrapper_work" new -s "$tmux_wrapper_session" -n "$tmux_wrapper_initial_window_name" "ssh $tmux_wrapper_host -t 'cd $tmux_wrapper_initial_window_path; $tmux_wrapper_shell'"
 }
 tmux_wrapper_exec_bare(){
   tmux -u -S "$tmux_wrapper_socket" -f "$tmux_wrapper_work" new -s "$tmux_wrapper_session" -n "$tmux_wrapper_session" "ssh $tmux_wrapper_host"
