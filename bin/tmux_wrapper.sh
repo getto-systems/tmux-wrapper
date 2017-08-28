@@ -1,5 +1,29 @@
 #!/bin/bash
 
+declare -A tmux_wrapper_envs
+declare -a tmux_wrapper_env_names
+
+declare -A tmux_wrapper_bind_titles
+declare -A tmux_wrapper_bind_paths
+declare -a tmux_wrapper_bind_names
+
+tmux_wrapper_env(){
+  tmux_wrapper_env_names[${#tmux_wrapper_env_names[@]}]=$1
+  tmux_wrapper_envs[$1]=$2
+}
+tmux_wrapper_bind(){
+  if [ -z "$tmux_wrapper_initial_window_name" ]; then
+    tmux_wrapper_initial_window_name=$2
+  fi
+  if [ -z "$tmux_wrapper_initial_window_path" ]; then
+    tmux_wrapper_initial_window_path=$3
+  fi
+
+  tmux_wrapper_bind_names[${#tmux_wrapper_bind_names[@]}]=$1
+  tmux_wrapper_bind_titles[$1]=$2
+  tmux_wrapper_bind_paths[$1]=$3
+}
+
 tmux_wrapper_main(){
   if [ -z "$tmux_wrapper_file" ]; then
     tmux_wrapper_file=~/.tmux.conf
@@ -52,24 +76,38 @@ tmux_wrapper_main(){
   echo 'set -g status-left "#[fg='$tmux_wrapper_color']<'$tmux_wrapper_session'>"' >> "$tmux_wrapper_work"
   echo 'set -g status-right "#[fg='$tmux_wrapper_color'][#('$tmux_status_cmd' | sed '"'s/.*load average: //'"')]"' >> "$tmux_wrapper_work"
 
+  tmux_wrapper_build_env
   tmux_wrapper_build_bind
 
   tmux_wrapper_exec
 }
 tmux_wrapper_build_bind(){
-  :
+  local cmd
+  local bind_name
+
+  if [ "$tmux_wrapper_host" == localhost ]; then
+    cmd="$tmux_wrapper_shell -c"
+  else
+    cmd="ssh $tmux_wrapper_host -t"
+  fi
+
+  if [ ${#tmux_wrapper_bind_names[@]} -gt 0 ]; then
+    for bind_name in ${tmux_wrapper_bind_names[@]}; do
+      echo bind $bind_name neww -n ${tmux_wrapper_bind_titles[$bind_name]} '"'$cmd' '"'cd ${tmux_wrapper_bind_paths[$bind_name]}; $tmux_wrapper_shell'"'"' >> "$tmux_wrapper_work"
+    done
+  fi
 }
-tmux_wrapper_bind(){
-  if [ -z "$tmux_wrapper_initial_window_name" ]; then
-    tmux_wrapper_initial_window_name=$2
+tmux_wrapper_build_env(){
+  local env_name
+
+  if [ ${#tmux_wrapper_env_names[@]} -gt 0 ]; then
+    for env_name in ${tmux_wrapper_env_names[@]}; do
+      echo "set-environment -g $env_name ${tmux_wrapper_envs[$env_name]}" >> "$tmux_wrapper_work"
+    done
   fi
-  if [ -z "$tmux_wrapper_initial_window_path" ]; then
-    tmux_wrapper_initial_window_path=$3
-  fi
-  echo bind $1 neww -n $2 '"ssh '$tmux_wrapper_host' -t '"'cd $3; $tmux_wrapper_shell'"'"' >> "$tmux_wrapper_work"
 }
 tmux_wrapper_exec(){
-  local cmd;
+  local cmd
 
   if tmux -S "$tmux_wrapper_socket" has -t "$tmux_wrapper_session" 2> /dev/null; then
     tmux -S "$tmux_wrapper_socket" source "$tmux_wrapper_work"
