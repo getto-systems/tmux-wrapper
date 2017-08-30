@@ -32,7 +32,7 @@ tmux_wrapper_main(){
     tmux_wrapper_work_path=~/.tmux.wrapper
   fi
   if [ -z "$tmux_wrapper_term" ]; then
-    tmux_wrapper_term=xterm-256color
+    tmux_wrapper_term=screen-256color
   fi
   if [ -z "$tmux_wrapper_host" ]; then
     tmux_wrapper_host=localhost
@@ -44,11 +44,8 @@ tmux_wrapper_main(){
     tmux_wrapper_color=green
   fi
 
-  if [ -z "$tmux_wrapper_id_prefix" ]; then
-    tmux_wrapper_id_prefix=hosts
-  fi
   if [ -z "$tmux_wrapper_id" ]; then
-    tmux_wrapper_id=${0#*$tmux_wrapper_id_prefix/}
+    tmux_wrapper_id=${0}
     tmux_wrapper_id="tmux-${tmux_wrapper_id//\//-}"
   fi
   if [ -z "$tmux_wrapper_session" ]; then
@@ -137,8 +134,8 @@ tmux_wrapper_exec(){
   fi
   cmd="$cmd 'cd $tmux_wrapper_initial_window_path; $tmux_wrapper_shell'"
 
-  tmux -u -S "$tmux_wrapper_socket" -f "$tmux_wrapper_work" new -s "$tmux_wrapper_session" -n "$tmux_wrapper_initial_window_name" "$cmd"
+  tmux -2 -u -S "$tmux_wrapper_socket" -f "$tmux_wrapper_work" new -s "$tmux_wrapper_session" -n "$tmux_wrapper_initial_window_name" "$cmd"
 }
 tmux_wrapper_exec_bare(){
-  tmux -u -S "$tmux_wrapper_socket" -f "$tmux_wrapper_work" new -s "$tmux_wrapper_session" -n "$tmux_wrapper_session" "$cmd"
+  tmux -2 -u -S "$tmux_wrapper_socket" -f "$tmux_wrapper_work" new -s "$tmux_wrapper_session" -n "$tmux_wrapper_session" "$cmd"
 }
