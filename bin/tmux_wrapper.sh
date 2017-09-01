@@ -108,8 +108,8 @@ tmux_wrapper_exec(){
   local cmd
 
   if tmux -S "$tmux_wrapper_socket" has -t "$tmux_wrapper_session" 2> /dev/null; then
-    tmux -S "$tmux_wrapper_socket" source "$tmux_wrapper_work"
-    tmux -S "$tmux_wrapper_socket" attach -t "$tmux_wrapper_session"
+    tmux -2 -u -S "$tmux_wrapper_socket" source "$tmux_wrapper_work"
+    tmux -2 -u -S "$tmux_wrapper_socket" attach -t "$tmux_wrapper_session"
     return
   fi
 
