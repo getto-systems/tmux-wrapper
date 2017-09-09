@@ -58,8 +58,8 @@ tmux_wrapper_work_path=~/.tmux.wrapper
 tmux_wrapper_status_cmd=uptime
 
 tmux_wrapper_build_status(){
-  echo 'set -g status-left "#[fg='$tmux_wrapper_color']<'$tmux_wrapper_session'>"' >> "$tmux_wrapper_work"
-  echo 'set -g status-right "#[fg='$tmux_wrapper_color'][#('$tmux_wrapper_status_cmd' | sed '"'s/.*load average: //'"')]"' >> "$tmux_wrapper_work"
+  echo 'set -g status-left "#[fg='$tmux_wrapper_color']<'$tmux_wrapper_session'>"' >> "$conf"
+  echo 'set -g status-right "#[fg='$tmux_wrapper_color'][#('$tmux_wrapper_status_cmd' | sed '"'s/.*load average: //'"')]"' >> "$conf"
 }
 ```
 
@@ -79,4 +79,3 @@ tmux_wrapper_build_status(){
 ### ほぼ指定しないで良いもの
 
 * `tmux_wrapper_session`   : セッション名
-* `tmux_wrapper_work`      : スクリプトで生成する作業ファイル、ソケットファイルを保存するパス
