@@ -54,10 +54,13 @@ tmux_wrapper_main(){
 
   tmux_wrapper_work=$tmux_wrapper_work_path/$tmux_wrapper_session.conf
 
-  if [ "$tmux_wrapper_host" == localhost ]; then
-    tmux_status_cmd=uptime
-  else
-    tmux_status_cmd="ssh $tmux_wrapper_host uptime"
+  if [ -z "$tmux_wrapper_status_cmd" ]; then
+    if [ "$tmux_wrapper_host" == localhost ]; then
+      tmux_wrapper_status_cmd=uptime
+    else
+      tmux_wrapper_status_cmd="ssh $tmux_wrapper_host uptime"
+    fi
+    tmux_wrapper_status_cmd=$tmux_wrapper_status_cmd" | sed 's/.*load average: //'"
   fi
 
   cat "$tmux_wrapper_file" > "$tmux_wrapper_work"
@@ -66,13 +69,16 @@ tmux_wrapper_main(){
   echo >> "$tmux_wrapper_work"
   echo 'set -g default-terminal "'$tmux_wrapper_term'"' >> "$tmux_wrapper_work"
   echo 'set -ga terminal-overrides ",'$tmux_wrapper_term:Tc'"' >> "$tmux_wrapper_work"
-  echo 'set -g status-left "#[fg='$tmux_wrapper_color']<'$tmux_wrapper_session'>"' >> "$tmux_wrapper_work"
-  echo 'set -g status-right "#[fg='$tmux_wrapper_color'][#('$tmux_status_cmd' | sed '"'s/.*load average: //'"')]"' >> "$tmux_wrapper_work"
+  tmux_wrapper_build_status
 
   tmux_wrapper_build_env
   tmux_wrapper_build_bind
 
   tmux_wrapper_exec
+}
+tmux_wrapper_build_status(){
+  echo 'set -g status-left "#[fg='$tmux_wrapper_color']<'$tmux_wrapper_session'>"' >> "$tmux_wrapper_work"
+  echo 'set -g status-right "#[fg='$tmux_wrapper_color'][#('$tmux_wrapper_status_cmd')]"' >> "$tmux_wrapper_work"
 }
 tmux_wrapper_build_bind(){
   local cmd
