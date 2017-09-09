@@ -1,26 +1,23 @@
-tmux wrapper
-============
+# tmux wrapper
 
-ホスト、ステータスバーの色を指定して tmux を起動する
+create tmux session with host, status-bar color, etc
 
 
-usage
------
-
-以下のようなラッパースクリプトを作成して叩く
+## Usage
 
 ```bash
 #!/bin/bash
 
 . tmux_wrapper.sh
 
+tmux_wrapper_shell=/bin/zsh
 tmux_wrapper_host=192.168.1.1
 tmux_wrapper_color=red
 
-tmux_wrapper_build_bind(){
-	# bind key, window name, initial path
-	tmux_wrapper_bind c name /path/to/dir
-}
+# <bind-key> <window-name> <initial-path>
+tmux_wrapper_bind c home /path/to/home
+
+tmux_wrapper_env MY_ENV VALUE
 
 tmux_wrapper_main
 ```
@@ -28,11 +25,10 @@ tmux_wrapper_main
 仕様
 ----
 
-* tmux は -S フラグでソケットパス `~/.tmux.wrapper/$tmux_wrapper_id.sock` を指定
-* ~/.tmux.conf をベースにして設定を `~/.tmux.wrapper/$tmux_wrapper_id.conf` に結合させて tmux -f でこれを指定
+* ~/.tmux.conf をベースにして設定を `~/.tmux.wrapper/$tmux_wrapper_session.conf` に結合させて tmux -f でこれを指定
 * 指定したホストに ssh する window を作成する
 * 初期 window は `tmux_wrapper_bind` で最初に指定されたパスで初期化される
-* `tmux_wrapper_build_bind` で指定した bind key, window name, initial path で bind の設定が作成される
+* `tmux_wrapper_build_bind` で指定した bind-key, window-name, initial-path で bind の設定が作成される
 
 規約
 ----
@@ -50,26 +46,28 @@ tmux_wrapper_main
 ```
 tmux_wrapper_color=green
 tmux_wrapper_host=localhost
-tmux_wrapper_build_bind(){
-	:
-}
+tmux_wrapper_shell=bash
 
-tmux_wrapper_term=screen-256color
+tmux_wrapper_term=xterm-256color
 tmux_wrapper_file=~/.tmux.conf
 tmux_wrapper_initial_window_name=""
 tmux_wrapper_initial_window_path=""
 
-tmux_wrapper_id_prefix="hosts"
-tmux_wrapper_id="tmux${${0#*$tmux_wrapper_id_prefix/}//\/-}"
 tmux_wrapper_session="<$(basename $0)>"
 tmux_wrapper_work_path=~/.tmux.wrapper
+tmux_wrapper_status_cmd=uptime
+
+tmux_wrapper_build_status(){
+  echo 'set -g status-left "#[fg='$tmux_wrapper_color']<'$tmux_wrapper_session'>"' >> "$tmux_wrapper_work"
+  echo 'set -g status-right "#[fg='$tmux_wrapper_color'][#('$tmux_wrapper_status_cmd' | sed '"'s/.*load average: //'"')]"' >> "$tmux_wrapper_work"
+}
 ```
 
 ### たいてい指定するもの
 
-* `tmux_wrapper_host`       : 接続するホスト
-* `tmux_wrapper_color`      : ステータスラインの色
-* `tmux_wrapper_build_bind` : bind コマンドを生成
+* `tmux_wrapper_host`  : 接続するホスト
+* `tmux_wrapper_color` : ステータスラインの色
+* `tmux_wrapper_bind`  : bind コマンドを生成
 
 ### 必要に応じて指定するもの
 
@@ -80,29 +78,5 @@ tmux_wrapper_work_path=~/.tmux.wrapper
 
 ### ほぼ指定しないで良いもの
 
-* `tmux_wrapper_id_prefix` : `tmux_wrapper_id` の生成時に使用される prefix
-* `tmux_wrapper_id`        : ソケットパス、生成する設定ファイルパスに使用される id
 * `tmux_wrapper_session`   : セッション名
 * `tmux_wrapper_work`      : スクリプトで生成する作業ファイル、ソケットファイルを保存するパス
-
-### tmux_wrapper_build_bind のサンプル
-
-```
-tmux_wrapper_build_bind(){
-	tmux_wrapper_bind c name /path/to/dir
-	tmux_wrapper_bind M-1 name1 /path/to/dir1
-	tmux_wrapper_bind M-2 name2 /path/to/dir2
-	tmux_wrapper_bind M-3 name3 /path/to/dir3
-}
-```
-
-と書くと以下のように bind コマンドが生成される
-
-```
-bind c neww -n name "ssh $tmux_wrapper_host -t 'cd /path/to/dir; bash'"
-bind M-1 neww -n name1 "ssh $tmux_wrapper_host -t 'cd /path/to/dir1; bash'"
-bind M-2 neww -n name2 "ssh $tmux_wrapper_host -t 'cd /path/to/dir2; bash'"
-bind M-3 neww -n name3 "ssh $tmux_wrapper_host -t 'cd /path/to/dir3; bash'"
-```
-
-個々の bind で異なるホストを指定できるようにするつもりはない
