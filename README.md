@@ -64,7 +64,7 @@ tmux_wrapper_build_status(){
 
 #### Almost all
 
-* `tmux_wrapper_host`  : host of connecting ssh. (if localhost, without ssh)
+* `tmux_wrapper_host`  : host of connecting with ssh. (if localhost, without ssh)
 * `tmux_wrapper_color` : status line color -> use in tmux_wrapper_build_status
 * `tmux_wrapper_bind`  : setup tmux key bind
 
@@ -86,7 +86,7 @@ tmux_wrapper_main
 ```
 
 - login shell : bash
-- login localhost
+- login to localhost
 - status line color : cyan
 
 ```bash
@@ -104,6 +104,6 @@ tmux_wrapper_main
 ```
 
 - login shell : /bin/zsh
-- ssh 192.168.1.1
+- ssh to 192.168.1.1
 - status line color : red
 - Ctrl-b c -> create new session with `title = home`, `current dir = /apps`
