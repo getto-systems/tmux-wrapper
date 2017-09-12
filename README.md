@@ -31,8 +31,6 @@ tmux_wrapper_shell=bash
 
 tmux_wrapper_term=xterm-256color
 tmux_wrapper_file=~/.tmux.conf
-tmux_wrapper_initial_window_name=""
-tmux_wrapper_initial_window_path=""
 
 tmux_wrapper_session="<$(basename $0)>"
 tmux_wrapper_work_path=~/.tmux.wrapper
