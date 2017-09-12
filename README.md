@@ -80,6 +80,20 @@ tmux_wrapper_build_status(){
 
 . tmux_wrapper.sh
 
+tmux_wrapper_color=cyan
+
+tmux_wrapper_main
+```
+
+- login shell : bash
+- login localhost
+- status line color : cyan
+
+```bash
+#!/bin/bash
+
+. tmux_wrapper.sh
+
 tmux_wrapper_shell=/bin/zsh
 tmux_wrapper_host=192.168.1.1
 tmux_wrapper_color=red
@@ -93,17 +107,3 @@ tmux_wrapper_main
 - ssh 192.168.1.1
 - status line color : red
 - Ctrl-b c -> create new session with `title = home`, `current dir = /apps`
-
-```bash
-#!/bin/bash
-
-. tmux_wrapper.sh
-
-tmux_wrapper_color=cyan
-
-tmux_wrapper_main
-```
-
-- login shell : bash
-- login localhost
-- status line color : cyan
