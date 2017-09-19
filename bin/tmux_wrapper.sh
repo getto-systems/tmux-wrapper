@@ -25,6 +25,7 @@ tmux_wrapper_bind(){
 }
 
 tmux_wrapper_main(){
+  local conf_main
   local conf
 
   : ${tmux_wrapper_file:=~/.tmux.conf}
@@ -51,9 +52,17 @@ tmux_wrapper_main(){
     mkdir -p "$tmux_wrapper_work_path"
   fi
 
-  conf=$tmux_wrapper_work_path/$tmux_wrapper_session.conf
+  conf_main=$tmux_wrapper_work_path/$tmux_wrapper_session.conf
+  conf=$conf_main.tmp
+  if [ -f "$conf" ]; then
+    echo "tmux_wrapper work in process"
+    exit 1
+  fi
 
   tmux_wrapper_build_conf
+
+  mv -f $conf $conf_main
+
   tmux_wrapper_exec
 }
 tmux_wrapper_build_conf(){
@@ -100,7 +109,7 @@ tmux_wrapper_exec(){
   local window
   local cmd
 
-  tmux source-file "$conf" 2> /dev/null
+  tmux source-file "$conf_main" 2> /dev/null
 
   if tmux has -t "$tmux_wrapper_session" 2> /dev/null; then
     tmux -2 -u attach -t "$tmux_wrapper_session"
@@ -126,5 +135,5 @@ tmux_wrapper_exec(){
     cmd="$cmd 'cd $tmux_wrapper_initial_window_path; $tmux_wrapper_shell'"
   fi
 
-  tmux -2 -u -f "$conf" new -s "$tmux_wrapper_session" -n "$window" "$cmd"
+  tmux -2 -u -f "$conf_main" new -s "$tmux_wrapper_session" -n "$window" "$cmd"
 }
