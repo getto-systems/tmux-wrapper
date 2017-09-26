@@ -94,7 +94,7 @@ tmux_wrapper_build_bind(){
   local bind_name
 
   if [ "$tmux_wrapper_host" == localhost ]; then
-    cmd="$tmux_wrapper_shell -c"
+    cmd="/bin/sh -c"
   else
     cmd="ssh $tmux_wrapper_host -t"
   fi
@@ -117,7 +117,7 @@ tmux_wrapper_exec(){
   fi
 
   if [ "$tmux_wrapper_host" == localhost ]; then
-    cmd=$tmux_wrapper_shell
+    cmd=/bin/sh
   else
     cmd="ssh $tmux_wrapper_host"
   fi
