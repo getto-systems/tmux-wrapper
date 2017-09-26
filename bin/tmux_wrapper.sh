@@ -94,7 +94,7 @@ tmux_wrapper_build_bind(){
   local bind_name
 
   if [ "$tmux_wrapper_host" == localhost ]; then
-    cmd="$tmux_wrapper_shell -c"
+    cmd="/bin/sh -c"
   else
     cmd="ssh $tmux_wrapper_host -t"
   fi
@@ -116,21 +116,21 @@ tmux_wrapper_exec(){
     return
   fi
 
-  if [ "$tmux_wrapper_host" == localhost ]; then
-    cmd=$tmux_wrapper_shell
-  else
-    cmd="ssh $tmux_wrapper_host"
-  fi
-
   if [ -z "$tmux_wrapper_initial_window_name$tmux_wrapper_initial_window_path" ]; then
     window=$tmux_wrapper_shell
+
+    if [ "$tmux_wrapper_host" == localhost ]; then
+      cmd=$tmux_wrapper_shell
+    else
+      cmd="ssh $tmux_wrapper_host"
+    fi
   else
     window=$tmux_wrapper_initial_window_name
 
     if [ "$tmux_wrapper_host" == localhost ]; then
-      cmd="$cmd -c"
+      cmd="/bin/sh -c"
     else
-      cmd="$cmd -t"
+      cmd="ssh $tmux_wrapper_host -t"
     fi
     cmd="$cmd 'cd $tmux_wrapper_initial_window_path; $tmux_wrapper_shell'"
   fi
