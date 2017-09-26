@@ -116,12 +116,6 @@ tmux_wrapper_exec(){
     return
   fi
 
-  if [ "$tmux_wrapper_host" == localhost ]; then
-    cmd=/bin/sh
-  else
-    cmd="ssh $tmux_wrapper_host"
-  fi
-
   if [ -z "$tmux_wrapper_initial_window_name$tmux_wrapper_initial_window_path" ]; then
     window=$tmux_wrapper_shell
 
