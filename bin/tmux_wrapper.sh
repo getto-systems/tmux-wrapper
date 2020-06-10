@@ -100,7 +100,7 @@ tmux_wrapper_build_bind(){
   fi
 
   if [ ${#tmux_wrapper_bind_names[@]} -gt 0 ]; then
-    for bind_name in ${tmux_wrapper_bind_names[@]}; do
+    for bind_name in "${tmux_wrapper_bind_names[@]}"; do
       echo bind $bind_name neww -n ${tmux_wrapper_bind_titles[$bind_name]} '"'$cmd' '"'cd ${tmux_wrapper_bind_paths[$bind_name]}; $tmux_wrapper_shell'"'"' >> "$conf"
     done
   fi
