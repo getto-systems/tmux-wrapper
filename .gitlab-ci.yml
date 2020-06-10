@@ -31,7 +31,7 @@ release:
   stage: release
   only:
     refs:
-      - master@getto-systems-labo/tmux-wrapper
+      - master@getto-systems-base/labo/shell/tmux-wrapper
     changes:
       - .release-version
   except:
@@ -50,7 +50,7 @@ release_success:
   stage: release_notify
   only:
     refs:
-      - master@getto-systems-labo/tmux-wrapper
+      - master@getto-systems-base/labo/shell/tmux-wrapper
     changes:
       - .release-version
   except:
@@ -72,7 +72,7 @@ release_failure:
   stage: release_notify
   only:
     refs:
-      - master@getto-systems-labo/tmux-wrapper
+      - master@getto-systems-base/labo/shell/tmux-wrapper
     changes:
       - .release-version
   except:
